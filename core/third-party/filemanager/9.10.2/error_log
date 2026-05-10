@@ -1,0 +1,2 @@
+[20-Mar-2024 20:11:39 Europe/Rome] PHP Warning:  move_uploaded_file(../../../../app/web/upload/tinymce-source/SUNBURST60- Eversion_1.pdf): failed to open stream: No such file or directory in /home/senio243/public_html/simplecms/core/third-party/filemanager/9.10.2/upload.php on line 105
+[20-Mar-2024 20:11:39 Europe/Rome] PHP Warning:  move_uploaded_file(): Unable to move '/tmp/phpV2MIDi' to '../../../../app/web/upload/tinymce-source/SUNBURST60- Eversion_1.pdf' in /home/senio243/public_html/simplecms/core/third-party/filemanager/9.10.2/upload.php on line 105
