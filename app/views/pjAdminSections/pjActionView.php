@@ -12,7 +12,7 @@ foreach ($tpl['lp_arr'] as $v)
 		} 
 		?>
 		<div class="section-content">
-			<?php echo stripslashes(@$tpl['arr']['i18n'][$v['id']]['section_content']); ?>
+			<?php echo !empty($tpl['arr']['i18n'][$v['id']]['section_content']) ? stripslashes(@$tpl['arr']['i18n'][$v['id']]['section_content']) : ''; ?>
 		</div>
 	</div>
 	<?php

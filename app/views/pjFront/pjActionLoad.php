@@ -95,7 +95,7 @@ var pjQ = pjQ || {},
 		id: <?php echo isset($_GET['id']) && (int) $_GET['id'] > 0 ? (int) $_GET['id'] : 0; ?>
 	};
 	<?php
-	$dm = new pjDependencyManager(PJ_THIRD_PARTY_PATH);
+	$dm = new pjDependencyManager(PJ_INSTALL_PATH, PJ_THIRD_PARTY_PATH);
 	$dm->load(PJ_CONFIG_PATH . 'dependencies.php')->resolve();
 	?>
 	loadScript("<?php echo PJ_INSTALL_URL . $dm->getPath('storage_polyfill'); ?>storagePolyfill.min.js", function () {

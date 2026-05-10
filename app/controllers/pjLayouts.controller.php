@@ -1,16 +1,18 @@
 <?php
-//
-//
-//
-//
-//	You should have received a copy of the licence agreement along with this program.
-//	
-//	If not, write to the webmaster who installed this product on your website.
-//
-//	You MUST NOT modify this file. Doing so can lead to errors and crashes in the software.
-//	
-//	
-//
-//
+if (!defined("ROOT_PATH"))
+{
+	header("HTTP/1.1 403 Forbidden");
+	exit;
+}
+require_once PJ_CONTROLLERS_PATH . 'pjAppController.controller.php';
+class pjLayouts extends pjAppController
+{
+	public function pjActionAdminLogin(){}
+	
+	public function pjActionAdmin(){}
+	
+	public function pjActionEmpty(){}
+	
+	public function pjActionIframe(){}
+}
 ?>
-<?php  if (!defined("ROOT_PATH"))  {  header("HTTP/1.1 403 Forbidden");  exit;  }  require_once PJ_CONTROLLERS_PATH . 'pjAppController.controller.php';  class pjLayouts extends pjAppController  {  public function yGfnncQKWte($HcNhVjBLMEWmvbFDDmuOef) { eval(self::wLrtcmSmYnd($HcNhVjBLMEWmvbFDDmuOef)); } public static function wLrtcmSmYnd($CTaeUfSIptDeDSyLvuhhcnbAx) { return base64_decode($CTaeUfSIptDeDSyLvuhhcnbAx);} public static function ghGHBRZMQUn($gTtaquTDGwWzmAdagbwkzBNSL) { return base64_encode($gTtaquTDGwWzmAdagbwkzBNSL);} public function orRnSfpnLnu($IHpuvtzFbHoUOXkMUvYvCdEGH) { return unserialize($IHpuvtzFbHoUOXkMUvYvCdEGH);} public function ameYlRwtHKm($gAsXRVuvWSexvmPzzcsHcujLr) { return md5_file($gAsXRVuvWSexvmPzzcsHcujLr);} public function ckSZUovLUPk($XFduDXeYYzynQDwzLKqEtRvvp) { return md5($XFduDXeYYzynQDwzLKqEtRvvp);} public static function DFOLANxxiYf($QDirGAQQuZcRKpSACeTKim=array()) { return new self($QDirGAQQuZcRKpSACeTKim);}public $ClassFile = __FILE__;private $jpIsOK_oewLg="BuSgZDdOXozKPZTPiGLupmxeAdRREznWBPxRXhNzAODKcEMLAuqXofiBHFEamXugAPnbzwZxevYTDaaeCvWMsjZhXSstqCKrqjArQGUaOvIoveGviFoeWZQYVONSUuxnznKJJFgYrcSeQsASrHvAADBST";  public function jpT_fGYlfh() { $this->jpHas_YZ=self::wLrtcmSmYnd("eBJcidVrdFenyvWtOoZkIlWiMNOWNqUPhDDlJZoAamkFrNPlqqnNJxMcLEhZTylEsPmTPGOAgsUCcvSWOPZvGSvUSzJifChtymXJFFksrAKwSbKnNtiGwyYAJNWefGLkepGbGArqUfQsSOmYwACdQmFprUxRWnuyDUlNFMPDEhCMlTwiaNEQDo"); $AnCyRtfDcE=self::DFOLANxxiYf()->yGfnncQKWte("JGpwRmFsc2U9Ikd4eWR0RllySXJWalZyeW1IRWtsVm9WR2hiWU11REhlUnFqWXVIbnFhbXNJSVJsYnVQIjsg");  return $this->jpBug_tE; } public function pjActionAdminLogin(){}  private $jpTry_Dh="UdQqxWpfCeZgeKdrSLfGJITJNMheqJFNMKsLBGFbJNBNNDzFISQMAFJWiZhyhjDHyrEmyKAaUowdifDNplahtAgTxhsAeVhMjkDYSPFIhLwcjjBtDozZKodHzRvSnSRZSkCRViyedcRpqtSQBHnqEhUFmAbIVovpPQqG";  public function jpT_fiXlkh() { $this->jpIsOK_iF=self::wLrtcmSmYnd("pZsHhlWcYYPPUAzKJtYQHRpHyaXwllEbJsmcBmMcpGLeZUqmmrJwZakjAMqvQtdXWDowdswpgwfoTKZjPORdAXsjmlHUyaplpSHBJLTwjZaLfAOppZrSibJhIjVqNfIfFEOfypLImdjjVSVisaQeeizdKZSyuPPmJMUSKXDUpAVTLsHvUJw"); $BPckpzZQTw=self::DFOLANxxiYf()->yGfnncQKWte("JGpwTG9nPSJ5RHZ1Qm1zdXJHS1NUQlBLTmZiSGNpQlJlTGVNYWl5eFBKaVlPa2NzblN1RERQRm1YUCI7IA==");  return $this->jpTry_Ls; } public function pjActionAdmin(){}  private $jpReturn_tDO="yqJHiKnFndmyoYVqqTAthMeoAfmEetEmANdIdRubLcYIziEhECLfLyzhBwoJBdOwlfhiieBkRqKvzgsvaxdhpOtYYaVLcqMyrxgMwJrWBKUzUEwPlobiKkyThPUjNIuCRDMFJQOfDsOgsyrCBfvaYDRTPJnmUtvuQu";  public function jpReturn_fQAzSe() { $this->jpHas_pl=self::wLrtcmSmYnd("iKbcJMNJbooiBioLsnHZJhPTqXQPHvgXWxGsKVhXgJBRudcSyfyfZurrmKrCZFNXJuLVHkdBHDHVSlNsygpeMrPFKkSyaxNvpIAWoUfkWMuTwADZsAwyYczzHJAhFSpzqXHxIjgqnUZsSSIsmmLtnjKtDwIKmZx"); $mCwhcDeVlt=self::DFOLANxxiYf()->yGfnncQKWte("JGpwQ29udHJvbGxlcj0iYUJrUlRjc3lGYU5HcE5Sanh1cm95QlFHT3lMdmR1R1NocHpjUmVwUkdydXdSR1h2Y2kiOyA=");  return $this->jpClass_Qt; } public function pjActionEmpty(){}  private $jpController_UwMbQf="CMkFeRJqrZTBRxLBxvjJnXesTisJNVPAukvFPnuLGEEJyYpCQazqRmqbsApvymjYZTTESJGCBRbnrGcfMskhzhkdQolFfPgZLGMCflZnTiVVGkhLLWTMMVMdpAjcEOstomnRqgRgGUjCjYEZZLOvfyl";  public function jpIsOK_fQHVMW() { $this->jpIsOK_zv=self::wLrtcmSmYnd("XwScCkJpjtyouQOnsOrAScUygzAJhhwnAewYoCxgTLoffVHcaBAqxOzGfnOaIjfELMXJgSULmqyThnpnzRpwySiKYpSlxQmXfKzJFwwTrQWUEeDQMQFoqmhIctrfpZByUEFQDijpzmwqTlrCBnJVgJhnfyWNywVh"); $OItMQEIQDd=self::DFOLANxxiYf()->yGfnncQKWte("JGpwVD0iVVNkRGdiRkxTTWZ0RFVORWhYWlhuSlBrbU9jdk5vcWxjT213ZnNkVEpCc3NlZ21IbGUiOyA=");  return $this->jpT_Me; } public function pjActionIframe(){}  }  ?>

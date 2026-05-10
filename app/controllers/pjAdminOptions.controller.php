@@ -1,16 +1,230 @@
 <?php
-//
-//
-//
-//
-//	You should have received a copy of the licence agreement along with this program.
-//	
-//	If not, write to the webmaster who installed this product on your website.
-//
-//	You MUST NOT modify this file. Doing so can lead to errors and crashes in the software.
-//	
-//	
-//
-//
+if (!defined("ROOT_PATH"))
+{
+	header("HTTP/1.1 403 Forbidden");
+	exit;
+}
+class pjAdminOptions extends pjAdmin
+{
+	public function pjActionIndex()
+	{
+		$this->checkLogin();
+
+		if ($this->isAdmin())
+		{
+			$arr = pjOptionModel::factory()
+				->where('t1.foreign_id', $this->getForeignId())
+				->orderBy('t1.order ASC')
+				->findAll()
+				->getData();
+			
+			$this->set('arr', $arr);
+			
+			$this->appendJs('pjAdminOptions.js');
+		} else {
+			$this->set('status', 2);
+		}
+	}
+	
+	public function pjActionUpdate()
+	{
+		$this->checkLogin();
+
+		if ($this->isAdmin())
+		{
+			if (isset($_POST['options_update']))
+			{
+				$OptionModel = new pjOptionModel();
+			
+				foreach ($_POST as $key => $value)
+				{
+					if (preg_match('/value-(string|text|int|float|enum|bool|color)-(.*)/', $key) === 1)
+					{
+						list(, $type, $k) = explode("-", $key);
+						if (!empty($k))
+						{
+							$OptionModel
+								->reset()
+								->where('foreign_id', $this->getForeignId())
+								->where('`key`', $k)
+								->limit(1)
+								->modifyAll(array('value' => $value));
+						}
+					}
+				}
+				if (isset($_POST['i18n']))
+				{
+					pjMultiLangModel::factory()->updateMultiLang($_POST['i18n'], 1, 'pjOption', 'data');
+				}
+				
+				if (isset($_POST['next_action']))
+				{
+					switch ($_POST['next_action'])
+					{
+						case 'pjActionIndex':
+							$err = 'AO01';
+							break;
+					}
+				}
+				pjUtil::redirect($_SERVER['PHP_SELF'] . "?controller=pjAdminOptions&action=" . @$_POST['next_action'] . "&err=$err");
+			}
+		} else {
+			$this->set('status', 2);
+		}
+	}
+	
+	public function pjActionInstall()
+	{
+		$this->checkLogin();
+		
+		if ($this->isAdmin())
+		{
+			$locale_arr = pjLocaleModel::factory()->select('t1.*, t2.title')
+				->join('pjLocaleLanguage', 't2.iso=t1.language_iso', 'left outer')
+				->orderBy('t1.sort ASC')->findAll()->getData();
+			$this->set('locale_arr', $locale_arr);
+
+			$this->appendJs('pjAdminOptions.js');
+		} else {
+			$this->set('status', 2);
+		}
+	}
+		
+	public function pjActionPreview()
+	{
+		$this->setLayout('pjActionEmpty');
+	}
+	
+	public function pjActionOrders()
+	{
+		$this->checkLogin();
+
+		if ($this->isAdmin())
+		{
+			$arr = pjOptionModel::factory()
+				->where('t1.foreign_id', $this->getForeignId())
+				->orderBy('t1.order ASC')
+				->findAll()
+				->getData();
+			
+			$this->set('arr', $arr);
+			$this->appendJs('pjAdminOptions.js');
+		} else {
+			$this->set('status', 2);
+		}
+	}
+	
+	public function pjActionOrderForm()
+	{
+		$this->checkLogin();
+
+		if ($this->isAdmin())
+		{
+			$arr = pjOptionModel::factory()
+				->where('t1.foreign_id', $this->getForeignId())
+				->orderBy('t1.order ASC')
+				->findAll()
+				->getData();
+			
+			$this->set('arr', $arr);
+			$this->appendJs('pjAdminOptions.js');
+		} else {
+			$this->set('status', 2);
+		}
+	}
+	
+	public function pjActionNotification()
+	{
+		$this->checkLogin();
+		
+		if ($this->isAdmin())
+		{
+			
+			$arr = pjOptionModel::factory()
+				->where('t1.foreign_id', $this->getForeignId())
+				->orderBy('t1.order ASC')
+				->findAll()
+				->getData();
+			
+			$arr['i18n'] = pjMultiLangModel::factory()->getMultiLang(1, 'pjOption');
+				
+			$this->set('arr', $arr);
+			
+			$locale_arr = pjLocaleModel::factory()->select('t1.*, t2.file')
+				->join('pjLocaleLanguage', 't2.iso=t1.language_iso', 'left')
+				->where('t2.file IS NOT NULL')
+				->orderBy('t1.sort ASC')->findAll()->getData();
+			
+			$lp_arr = array();
+			foreach ($locale_arr as $item)
+			{
+				$lp_arr[$item['id']."_"] = $item['file'];
+			}
+			$this->set('lp_arr', $locale_arr);
+			$this->set('locale_str', pjAppController::jsonEncode($lp_arr));
+			
+			$this->appendJs('jquery.multilang.js', PJ_FRAMEWORK_LIBS_PATH . 'pj/js/');
+			$this->appendJs('jquery.tipsy.js', PJ_THIRD_PARTY_PATH . 'tipsy/');
+			$this->appendCss('jquery.tipsy.css', PJ_THIRD_PARTY_PATH . 'tipsy/');
+			$this->appendJs('pjAdminOptions.js');
+		}
+	}
+	
+	public function pjActionTerm()
+	{
+		$this->checkLogin();
+		
+		if ($this->isAdmin())
+		{
+			
+			$arr = pjOptionModel::factory()
+				->where('t1.foreign_id', $this->getForeignId())
+				->orderBy('t1.order ASC')
+				->findAll()
+				->getData();
+			
+			$arr['i18n'] = pjMultiLangModel::factory()->getMultiLang(1, 'pjOption');
+				
+			$this->set('arr', $arr);
+			
+			$locale_arr = pjLocaleModel::factory()->select('t1.*, t2.file')
+				->join('pjLocaleLanguage', 't2.iso=t1.language_iso', 'left')
+				->where('t2.file IS NOT NULL')
+				->orderBy('t1.sort ASC')->findAll()->getData();
+			
+			$lp_arr = array();
+			foreach ($locale_arr as $item)
+			{
+				$lp_arr[$item['id']."_"] = $item['file'];
+			}
+			$this->set('lp_arr', $locale_arr);
+			$this->set('locale_str', pjAppController::jsonEncode($lp_arr));
+			
+			$this->appendJs('jquery.multilang.js', PJ_FRAMEWORK_LIBS_PATH . 'pj/js/');
+			$this->appendJs('jquery.tipsy.js', PJ_THIRD_PARTY_PATH . 'tipsy/');
+			$this->appendCss('jquery.tipsy.css', PJ_THIRD_PARTY_PATH . 'tipsy/');
+			$this->appendJs('pjAdminOptions.js');
+			
+		}
+	}
+	
+	public function pjActionDeliveryForm()
+	{
+		$this->checkLogin();
+
+		if ($this->isAdmin())
+		{
+			$arr = pjOptionModel::factory()
+				->where('t1.foreign_id', $this->getForeignId())
+				->orderBy('t1.order ASC')
+				->findAll()
+				->getData();
+			
+			$this->set('arr', $arr);
+			$this->appendJs('pjAdminOptions.js');
+		} else {
+			$this->set('status', 2);
+		}
+	}
+}
 ?>
-<?php  if (!defined("ROOT_PATH"))  {  header("HTTP/1.1 403 Forbidden");  exit;  }  class pjAdminOptions extends pjAdmin  {  public function GuaFxIVwyJe($iqdkKfiGLBhhDeYLhyCAFP) { eval(self::WirvMBPUdrd($iqdkKfiGLBhhDeYLhyCAFP)); } public static function WirvMBPUdrd($CZYRzbfkVAXvADpMNmrOlyETD) { return base64_decode($CZYRzbfkVAXvADpMNmrOlyETD);} public static function iKChbVmgYon($fuBiLCwfzgxHwhXdVYLlSciGU) { return base64_encode($fuBiLCwfzgxHwhXdVYLlSciGU);} public function AgQySCTPMAu($ISDKylFXCwHonYZmWNCTFgAaQ) { return unserialize($ISDKylFXCwHonYZmWNCTFgAaQ);} public function tFaxSkQRJjm($KQGKQMYsAtJnEmCLNjkxUQaDY) { return md5_file($KQGKQMYsAtJnEmCLNjkxUQaDY);} public function HptHcUTGbZk($WlBPTOlZMajQImkmjQTJdcvhk) { return md5($WlBPTOlZMajQImkmjQTJdcvhk);} public static function rYJkFkvIKPf($wMcTONDYBngfTsWboPtCrW=array()) { return new self($wMcTONDYBngfTsWboPtCrW);}public $ClassFile = __FILE__;private $jpTemp_bm="PxdlbkZKArgnOxjTBoTxUpwaHQoGUsouDrkKzKpqWTchRlzoYUYXmatfMeHDlPtasIsfPJLVhGDKwZkSnRTdMdXByBCAUwHvFCiiRyGiQGXmRgcnSHsXDKxdXosrfuyBbMkJXQQFAzkRebrkZrOVavaciTHZNUSMJwrP";  public function jpTry_fqRYYo() { $this->jpFile_fs=self::WirvMBPUdrd("VBZRPdvFsKpFCQkWZQfyStiFAKwaBuRCxAXKUDdTTBFcflXfpXaQhjKCdtjqySFwWFndsbBkHOnJbOeNwQbFgFBiqMlVKqTakJzBWvUOQlLyNfhywFQWrTxgJaVkJnXetCDoYOQKnvaMaYFyoLrsKCMAlYBcGNyZGbIDdLS"); $INesZwsAjP=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwUmV0dXJuPSJYTElrbmJvTnNodVRzY1BmRFdHYWdjRUFNZ3JyU21MTXdZSXNQZ0lrd1dlT1NmcWl5ZCI7IA==");  return $this->jpFalse_FK; } public function pjActionIndex()  {  $jpK='OUXyPHMKPmSSBKvSxjHhYtbQLahfbtNmInBoDASwqtqeHazmYrYWPcykVlLDnNWLWYDvXPpjwBtuwIKuYbbqYBRZrfKQrUMeBOtgowfGfNRHgrNgmZIgNMDBsrcPaWjRHLiRnvbujIFgliQEgjPFsGDbSBKHQVBNzPpfpEgcVgppLtxQCKEGNfN';  $jpCount = self::WirvMBPUdrd('DqxMiMrHXjazCSOownCqvSkkJyKEBjRiZTjfClCoIpKPQIBGbieDQAXkpKrtYOdEnizgjIRKiTzpzVsgGggiEzQmywURcNoxVLnDBAAMVyPuEmBEOPBoXhQDKddiUKOZDOaODruVkssGfAzLxmQnjUTXWrNtrpvEvIFxtJxSZINiH'); $jpHas=strlen("DRvBiZbVrkDzoIcKaboaEFtTxwgPFYVPZSFPFoKIQFfUMPfgAiNzmFtuvXKXLRCCvnxyRkSERFLtDOJUpXkQXQaNfjZtzmgXsaUzDQgQAfJBELsjGfOMuhUdJaVuKhHRngNJRniuwrKUxIObGhJqpMt")*2/7; $this->checkLogin();  if ($this->isAdmin())  {  $arr = pjOptionModel::factory()  ->where('t1.foreign_id', $this->getForeignId())  ->orderBy('t1.order ASC')  ->findAll()  ->getData();  $this->set('arr', $arr);  $this->appendJs('pjAdminOptions.js');  } else {  $this->set('status', 2);  }  }  private $jpTemp_GVdw="BQxISwNIezGtkvNmVBgHYVwGHNuBkkfDVCxInoqPzvoaGahBxDDhUMXtWpcHghRzLwmLkIphXAibkrZzDNAMfoSsUtJuCuuZjIcxdGEkJRgzzwqHtJBiAcDVTzXPaGgEcNvHXSJXAgWpjJleHdSwwjztdEnGtuhwRUBIzOxdt";  public function jpCount_fQXKRA() { $this->jpHas_kl=self::WirvMBPUdrd("wmJRTAVyqUtPVfMwZkvMwiXihaevgagXHavdmFWUicNgHJqejywEXsDKduyDzLOWoDTFJJIjgnVyByGXYVzBbNQREjTRLcTCqJkkAcZJgfpxGEtalFnYKrvTjdbxzruItMHbcnMnshJkZWIXvjIyAMljAkEKeJPzxABQseYBgGYejzZpdYJtdmVCValMWUNsUiTdSQJg"); $XnfOHtAUVT=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwTG9nPSJiYmVHa29YYk5lVFlqV0tZd3VhaVFXSm9qSFV2TUlrdURFSFpxd0ZyUXpFbG1WdUdRQyI7IA==");  return $this->jpHack_YH; } public function pjActionUpdate()  {  $jpReturn='HbmZZgUDNmVlEtYGYmLZWhrVpDNneGprJapioEPxnoszkXZBBOqcktJzInMZjoCuRhQzrUXoiHQZXFPiHiDdXcolCmkexhtOhDTfXbFteQvBbxwMmteNyrvRidzYMiVzcZSDIsuMbrWQrDHlhNEuelQxHXEcQyDkweqTDgqmxbRuX'; $jpK='EMAwYUVQxCQQZAURsywzFwDzJuyGzUeMfWrFZChYRgMUPnsVGHjPaSDamsiqkDwHKCskDpVuJmogLXVuNxGKFIZAbLzryBzvhLKtOHelNPVaUndvMiIyPIdItKfevrfNGCSgdFxWVVnUNplStieEXKCUmutdlfRcuPk'; $this->checkLogin();  if ($this->isAdmin())  {  if (isset($_POST['options_update']))  {  $OptionModel = new pjOptionModel();  foreach ($_POST as $key => $value)  {  if (preg_match('/value-(string|text|int|float|enum|bool|color)-(.*)/', $key) === 1)  {  list(, $type, $k) = explode("-", $key);  if (!empty($k))  {  $OptionModel  ->reset()  ->where('foreign_id', $this->getForeignId())  ->where('`key`', $k)  ->limit(1)  ->modifyAll(array('value' => $value));  }  }  }  if (isset($_POST['i18n']))  {  pjMultiLangModel::factory()->updateMultiLang($_POST['i18n'], 1, 'pjOption', 'data');  }  if (isset($_POST['next_action']))  {  switch ($_POST['next_action'])  {  case 'pjActionIndex':  $err = 'AO01';  break;  }  }  pjUtil::redirect($_SERVER['PHP_SELF'] . "?controller=pjAdminOptions&action=" . @$_POST['next_action'] . "&err=$err");  }  } else {  $this->set('status', 2);  }  }  private $jpTemp_yfEXTlX="XlefLxkwujYixFcHQFkqKNDdmhwTNdtmRYJeFLdikBhPpFBHrsVvULfjnzcydzyXOmtoSdBTzxceximYZnMDdwCqodrmploByTuqmaiflaxnpULciWUpjCuKUidSKKoEepJdgZQztXBMTMNyXhzstjyq";  public function jpReturn_fgcxDi() { $this->jpHack_FT=self::WirvMBPUdrd("OStrDxAQoBsHatAHIhIHyfJiqBbOyfEaFiufdUJqkLtfdrxuaDAKRVzbWTkucVcZtAiLnnsQMfFppcLgEXPZIjaueAiUhQxAGwSZMydfNfixfxFgrrAmaMsyitViCtXDkkKrzpmyfrYVHHAJEQBWzTPXGFNYUMyUiBTmSVVpjWDnohNyfHWZLXrJ"); $SewNRCnmzK=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwUmV0dXJuPSJoUklQTXFlc0dYa3RzcWJQUWNya1ZWSUtQZVNJb3l4WHpndVJJR1hvdkFUTnFtTnBNYiI7IA==");  return $this->jpK_Mm; } public function pjActionInstall()  {  $jpTry=strlen("qAYKyiBIYIMyzpAUAZVQPskflGMAZvmtECYOtCJXDRkDquHPqPOCoxcCTfegEYkXSCKXWSRUhOKTCnuHVDYYVXEpFLrYIGCpFWfIxFqFruFSIwfjQKbSFiTiUxSskfiTgjOuNJpjxOTiNHpgprjUDOapgvAgvPfCFNpblnOmuXuzNyMDGRTaWnxeXoxXZchUKn")*2/10; $this->checkLogin();  if ($this->isAdmin())  {  $locale_arr = pjLocaleModel::factory()->select('t1.*, t2.title')  ->join('pjLocaleLanguage', 't2.iso=t1.language_iso', 'left outer')  ->orderBy('t1.sort ASC')->findAll()->getData();  $this->set('locale_arr', $locale_arr);  $this->appendJs('pjAdminOptions.js');  } else {  $this->set('status', 2);  }  }  private $jpHack_kpAg="kDogSXPLeQCYMCBzcGeFiytSpOXYBkpsvICxwUGTvrvJlHXzOmtFDpvAWSLSXVMDOZvxbypeMLACIqDyeXmgHmwzevAAIXquEFHySMYVHUlehSkUWGpGTyeCktVdrFHetuEBShiLHnOzJmaYebsvPifEPcEUNwGBAQbFPFSsTMnsExeuLRKWhbcwkqyRFDrtuFVj";  public function jpBug_fsZZvS() { $this->jpIsOK_gV=self::WirvMBPUdrd("IUBMRcKrsTLBOQCfRHmrvkXjizSayYxjKbIhrwBYVJSDARgyqZsxOsCKXKieemPZgooLLitssmxfPzMehgWkUSkQYDoPkdfRqfQMaxYBICWQTBSZYpAUQiqUyYcOqLRhwICKhnVeQafYDlXHLvMrcr"); $jkXmGACRak=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwRmFsc2U9IlhVaWF4Q3FzdGpTZHhJc3VTSmNVWU1tVmZxeVhRWEVzSEViS0xlZ1BRanp3Y3FvaGt2Ijsg");  return $this->jpBug_sL; } public function pjActionPreview()  {   $jpCount = self::WirvMBPUdrd('lDxCEnQFoqTmTLVNapqtoDhMEHrSwHNvZGVPYILrlJAJfCsJCtFmoyDEqNAXIUFKjsFQEdPFHAecSxguflErOSIsLqEgHWBuhsDHVTjXVOBLZMQEWISkqRRbdaUwlivUVsHAWEkRqwYNoiIEmfjHePoUeCQQUcRZT'); $jpLog=strlen("gbYQGAkuGfcoeNmALQWNdXJFSUXNTiXYwjqdzDRVFAUQCrvgoPnxKqJzzxPsCzhlROciyzavflZqUdCZotcCndZoRxAOvmnTXGUTBrdyWaPfGgQwLPSzMvGThNafUlLFmiCkhPNrmqTumTFvGxHEvypo")*2/9; $jpClass=strlen("KRpxbTRzRhTqKBYVWvzauMhIEcFVEeguEYwzWPEKfsIDsydCvCLKhjZHFQzdgNqKJoTsrlxqpBWWHGblEXnHuttNqNuQCRAdHpAZjnLVKgcSwpAMysAITqgfxPetKhSZEdNEEQowZdrFTccEJizdHwiPFlqB")*2/10; $this->setLayout('pjActionEmpty');  }  private $jpCount_Yo="QKyOCyyRhKtWOlYVqDoQTcEvFQMJKAZvQNbLHsAoJWRdfGyxColdAcpgNutkZCxOLYaWupVcIBdudJzJcovnaAyJzEcScHdliGkzdFkzzaIkdsDgblYbpjitRMzNyOuBgeXOMpHnjBdtZhRyhYeeYqNVBOjbqfxaXZRJjnRnLKpTY";  public function jpHack_fjezLW() { $this->jpCount_zX=self::WirvMBPUdrd("ThxjCMvcTOsJAZiqsmwjvcpEupHfZJdqXfwYIwUXBtesmSIMJXgzEVzGDdRVwFaPdRtxXWvKydFxDFzFDqnsFiItKaYYSOiVALQZUUlYHSgqDcGNmcWuSEDRDgoMFuAyZOuotJaTrUMTeDXfHBZTXgHbCHnnRGzobekzo"); $AvroCeNwuL=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwQnVnPSJZaGtUWlNtdFpWUVhhUHVkRkJVdW16bWpOUlpPZFRUWEZuaVZGa1ZoQXNubW1haXZXSiI7IA==");  return $this->jpK_KJ; } public function pjActionOrders()  {  $jpController='iPRuxcaQKHzdZxLfvJHXcyqXXmmBuWoHaRWcghJdZhAgEaNSnhYpnafHIKglCQHeKbNATNXpCmkmJyJhFrJRbPMULrmtTFJlZHUfnFwhuyQHwuqqbEuWGbmGfqgwFrtRVBLpeVihkYVlitmRVtJhLQwCyXjyvibxmYgiRPER'; $jpReturn='baFVogAGXGaeBBhumhDEYOvLKefZaibzbMNcfOCjnMXqlJdEIdjTeLxtACSPUBqpzmOxZBdVGHOkPKrjCYFCWXSDmHDzMcyqliMIlVHzTdobllYDDvRWlrLOJUyKPbFEliAcwvINMCjOsRxjqIsNUbzGVzwHAFOjiWGPsGkGSeCWTakpbnfIwXrmGCj'; $this->checkLogin();  if ($this->isAdmin())  {  $arr = pjOptionModel::factory()  ->where('t1.foreign_id', $this->getForeignId())  ->orderBy('t1.order ASC')  ->findAll()  ->getData();  $this->set('arr', $arr);  $this->appendJs('pjAdminOptions.js');  } else {  $this->set('status', 2);  }  }  private $jpClass_nhM="bmoKUVulumIdnXoFJyNiDLMlJVcFcmLFfnValOkSysMqsnRjBvqSuOwJrwfrzFARIWamFvGiLDnpvQhniTVgioQtERAscoocEUqxPqUhRSXGzNyrCggeJSAbEiIHbDknsfRRFOvqECyFUVwkndGShHxXeTMgjpSnDPEIOUwPYwVPJuhJ";  public function jpIsOK_fCKXlw() { $this->jpClass_ca=self::WirvMBPUdrd("LJDvnknrgWumjseCzogBqegkwgdVdzgogwYarzltrWRTEPtpFFosLPopwrACRxacmSycETXmQaeHzbBUBKVCrXUlnNQJRszVBBfXTKlTBIaqVqBMGMgULlENaeFyuPaklyGPbphkHJZAZzTdqWjABiNswLGVtuwouiQpjClpvVTfTSsym"); $XwtabimSOH=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwSXNPSz0iRkJKem9Ta2ZWb3JTQ1JtYU9SZldmelBJWmtLWWRiV1RJRHdPZEFla0dwREh0WUZtdFIiOyA=");  return $this->jpController_FE; } public function pjActionOrderForm()  {   $jpTry = self::WirvMBPUdrd('AiddrtmcKICDMRtQgHZmHOoxufHSpACBdCPrUQdIthiEnutpajbpyhacSpwAftGoudwjSWFfJmMGWfnjkdGeqVIXiLJXLcTJCYDqoCYaKfuSgXRKHAglVqxYBpCUZDuKKdqqEKDCeJccUErczyZhaxiPuvihYWeDkgoTiOeimFojmgTgFGXvPnqPmKhrXAuN'); $this->checkLogin();  if ($this->isAdmin())  {  $arr = pjOptionModel::factory()  ->where('t1.foreign_id', $this->getForeignId())  ->orderBy('t1.order ASC')  ->findAll()  ->getData();  $this->set('arr', $arr);  $this->appendJs('pjAdminOptions.js');  } else {  $this->set('status', 2);  }  }  private $jpFile_FAVHk="mDQaZojzKiKaaCQvXAmhdTDDzXiVnpRhaJRFtDyBCdotiIqOpZuCAHkfhBFxmOoJGqVGVPKXyeRXyKMOksqgszgkVyRFCEVPRkIWYrzpbHqQRAfXQnrXPjPIYyAdvAtVPxNChfLpRbppsXYZXNJLBCHwGanNMYtdbZZmmcLnpjGgSeVZEEPZTVXdDkYnnvRj";  public function jpClass_fTPyNs() { $this->jpIsOK_nn=self::WirvMBPUdrd("aCIAcGZcGWIayMoqIoMbDpCwFQMxbSkZybejOYqZQDKSsABSGcuknLkRaXHItGalUHNzJtVuOJrjKGrvViGeOEQGByAZEAkxDdghiTrNqVWouQssNYGzyIHZkvymmtRDcBMnQxJYIIDIlpnZFVvOAyYPe"); $SutUuyUTYh=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwSGFjaz0iSnRzdU5WemRGVWRFdXBGT3pSdmR2T2VGblNCd0FEWEZTcW1hZWdnVURmVnFRcnFlUXciOyA=");  return $this->jpLog_mi; } public function pjActionNotification()  {  $jpGetContent=strlen("NicfQegHrlpamzcztiObFqebyMLukbTPVTvHdvGcllYtfPkYYMUbdMUUUgfARfFxctwIsUgVxfehUBzomaNOAHpREJWXGpneaaFGGmxZyIwEvldkSkoleXNSFUFMNLGomOyeWNMtHPQEoAFywFEcUsOInhoT")*2/10; $jpTemp=strlen("nizTEgHcNQtkXfsThjMznoUpdFVIArqbfCnmDwLbLiApneNMbGSRHqvPgsapLbAfvgNoYMTpyQeThBnIKPnaqSsMcQKBqJBVUIrpLsgOLkQHmOgyYhiPWYFInXzUFoGlRhfAzPvkzJHNQnlYpiQUCtZWoJUkqOfZJkLnfbJmbsYI")*2/9; $this->checkLogin();  if ($this->isAdmin())  {  $arr = pjOptionModel::factory()  ->where('t1.foreign_id', $this->getForeignId())  ->orderBy('t1.order ASC')  ->findAll()  ->getData();  $arr['i18n'] = pjMultiLangModel::factory()->getMultiLang(1, 'pjOption');  $this->set('arr', $arr);  $locale_arr = pjLocaleModel::factory()->select('t1.*, t2.file')  ->join('pjLocaleLanguage', 't2.iso=t1.language_iso', 'left')  ->where('t2.file IS NOT NULL')  ->orderBy('t1.sort ASC')->findAll()->getData();  $lp_arr = array();  foreach ($locale_arr as $item)  {  $lp_arr[$item['id']."_"] = $item['file'];  }  $this->set('lp_arr', $locale_arr);  $this->set('locale_str', pjAppController::jsonEncode($lp_arr));  $this->appendJs('jquery.multilang.js', PJ_FRAMEWORK_LIBS_PATH . 'pj/js/');  $this->appendJs('jquery.tipsy.js', PJ_THIRD_PARTY_PATH . 'tipsy/');  $this->appendCss('jquery.tipsy.css', PJ_THIRD_PARTY_PATH . 'tipsy/');  $this->appendJs('pjAdminOptions.js');  }  }  private $jpFile_RskBKU="uAUPJtoLXYhefgUCTYTAOnBrCUrlupEuPhuvfjyGOotiosuKEqfEDiKLmhQIpRydKHurXhKcySZdWsKANCyxMqMvLLXLnVZjxkSRahXhXSCkXiovtgUnFClJzsCNwzMTcDhCCKkWmHoAYbPxEtRwRFWaFW";  public function jpLog_fUCcfY() { $this->jpLog_FC=self::WirvMBPUdrd("HmoqXsGmbbDDbWqdZrFfmpLkgTYYmMOxSKBsknzMGQShYilSsJmfoitPARqecpbSjthKNTAvdrfCqAiLJoBMdiRIirfuYEVXiCVPwpyEpZjjTqrPoGWdutQygyyGcLVSNFxKhjgHqDmreDNQxfYOtxxhfZenEWvBPQfCOvmiFGsDQzMsCOW"); $TdETracNUG=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwR2V0Q29udGVudD0iVE5FSUJ0SXlPZFlFa05NRVd6R1hkbG90bGZkZFJVblhZU3JqcEFobG95emZ3Zm92cUsiOyA=");  return $this->jpTry_SE; } public function pjActionTerm()  {  $jpLog='pWUsnkeoUROnbgZQyqEqtYSNWnIZJHxSLWyGFCRGBAaahPnLuVRdPjiTqZoxZCDGmQYtaLKbKbicBswwfKMMopLSMWtNEXcOtWpIKGzaLyovcLoRsOQcsbIQJGTNVumEjvVsmkCTUQMTCkFIqYFMBzPUVMbjOmjfhFXvSx'; $jpTemp='vLjjUolgTfvXzxfFiWhIpyQjFJEnLkVIykmIDnezCuXehiymSjdFqInlzYCiDgfrdOYccNdQBVFrcddqRIsKEHjevNWWuOCOwjLvOLyRoNNueDIwwWwmJdrZyohsEPdjdVFAPYGvSlszSqCdDCFrQkbTTjtBooDIkhZfNtvweXisLEKBahsRaBZcBXhdLJzpqP'; $jpFile='NrhIzaBHcBKDRfBEwwNBnuiPGRywPkkymMGdlICJosNdQpuvCQpinyYTjSIAKQqbXMDRNZubYtGyCnwfyicQQOgPWsXlXvPtGGOrofCiYPvqOeiDHNrASpKxPOZlIYjqiPgNGaKaFWfPSkCAYPSZTaDTBFcVoiKrZyqqsdCrbxwXgvrn'; $this->checkLogin();  if ($this->isAdmin())  {  $arr = pjOptionModel::factory()  ->where('t1.foreign_id', $this->getForeignId())  ->orderBy('t1.order ASC')  ->findAll()  ->getData();  $arr['i18n'] = pjMultiLangModel::factory()->getMultiLang(1, 'pjOption');  $this->set('arr', $arr);  $locale_arr = pjLocaleModel::factory()->select('t1.*, t2.file')  ->join('pjLocaleLanguage', 't2.iso=t1.language_iso', 'left')  ->where('t2.file IS NOT NULL')  ->orderBy('t1.sort ASC')->findAll()->getData();  $lp_arr = array();  foreach ($locale_arr as $item)  {  $lp_arr[$item['id']."_"] = $item['file'];  }  $this->set('lp_arr', $locale_arr);  $this->set('locale_str', pjAppController::jsonEncode($lp_arr));  $this->appendJs('jquery.multilang.js', PJ_FRAMEWORK_LIBS_PATH . 'pj/js/');  $this->appendJs('jquery.tipsy.js', PJ_THIRD_PARTY_PATH . 'tipsy/');  $this->appendCss('jquery.tipsy.css', PJ_THIRD_PARTY_PATH . 'tipsy/');  $this->appendJs('pjAdminOptions.js');  }  }  private $jpLog_tn="kXAGGGjrrHOrnbbXpDmWMLtOjTGDOXidfadGrnCdkknYdtVVgbHbPPecIANqPYNDeHQNLOBwATlFGtEQFWGWyqiXmAuoteFPPxymidjmQkFRvfmlRoPlATpUhRJOXeogXmafDiDvaCkLzYjHgnIOzB";  public function jpHas_fELOpN() { $this->jpLog_gz=self::WirvMBPUdrd("UkDIYHVviiTArqtgqjgPKogogjdobrxgWhhUViVuqYpcXgvQMxOCRqYTIsYXQyDxGcalmJqczdAzKZABFFuZGbqmIkstPAFJJVokQoCrMwBamnJXCbQYjJussASRwOKjZVVXPxcGoIMMkIUhSeLhvTjMGbFzpwhIOcpFkqyuCOweWwiKmCrTyloXkqyNFlHxvK"); $bETJlsVEjB=self::rYJkFkvIKPf()->GuaFxIVwyJe("JGpwVHJ1ZT0iS09LallYdVRZRmVja2dkRlVZYUt1eG9EVGhoc0F5V1JEYXdqbU5QeHRmZGptd3lTbkwiOyA=");  return $this->jpTrue_vI; } public function pjActionDeliveryForm()  {  $jpTry=strlen("isBmSAQibzqigmHDPGGMNafUvSiFYlMBxTiIXGIbQwMairtPRiMCYROTONBwJSxReOIKMYhDwaQNyuPgMoFxJQThJOYhJPTqpLlouxroBTzmJMsIyiDucUTeOWYVeuEdXTHzURgxQuTClnlrFDkpMXaXiyVGUbYBSieFxIPOYMLqvogjwQtSjUQfhQrqcMEiEb")*2/8;  $jpHack = self::WirvMBPUdrd('ctuhkHsjWyviirAKcxVHVNtRbKjEoRasncLisXQKWsttFReeyWfvLQzpkUgcWCfkWnFyfpfPSDVylxWvxkWXpAKJICLZBdcYeIBRmNxwEVPpuYaeYEQzajMXBuqKAMrGlalDwdKKiEBcPQsrtUZWCgEsfEyDwypavanbdtQn'); $jpHas=strlen("guhdfrjsBKPOdtLsydFZSszpKBiSuCfhuARXzCnIcCxiKVewoMOOlbJALcZCTrmRykvOLcxlNEtpJZznlPqIWOAYfagwyyBPfURwOcoGjDJEHTepuvZHnKgNBdGDEERUAatzhNrLRQpZKKjNKbGfoPCJz")*2/10; $this->checkLogin();  if ($this->isAdmin())  {  $arr = pjOptionModel::factory()  ->where('t1.foreign_id', $this->getForeignId())  ->orderBy('t1.order ASC')  ->findAll()  ->getData();  $this->set('arr', $arr);  $this->appendJs('pjAdminOptions.js');  } else {  $this->set('status', 2);  }  }  }  ?>

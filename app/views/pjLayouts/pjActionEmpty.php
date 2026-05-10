@@ -1,3 +1,3 @@
-<?php
-require $content_tpl;
+<?php
+require $content_tpl;
 ?>
