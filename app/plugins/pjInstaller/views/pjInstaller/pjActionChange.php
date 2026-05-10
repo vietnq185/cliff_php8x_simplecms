@@ -59,13 +59,6 @@ if (isset($tpl['status']))
 					</p>
 					
 					<p>
-						<label class="i-title">Licence key: <span class="i-red">*</span></label>
-						<span>
-							<input type="text" name="license_key" class="pj-form-field w400" data-msg-required="Licence key is required" autocomplete="off" maxlength="255" />
-						</span>
-					</p>
-					
-					<p>
 						<label class="i-title">Captcha: <span class="i-red">*</span></label>
 						<span>
 							<input type="text" name="captcha" class="pj-form-field w100" maxlength="6" data-msg-required="Captcha is required" data-msg-remote="Captcha doesn't match" autocomplete="off" />
@@ -130,10 +123,6 @@ if (isset($tpl['status']))
 				<p>
 					<label class="i-title">New domain: <span class="i-red">*</span></label>
 					<input name="new_domain" class="pj-form-field w250" value="<?php echo pjSanitize::html($_SERVER['SERVER_NAME']); ?>" />
-				</p>
-				<p>
-					<label class="i-title">License key: <span class="i-red">*</span></label>
-					<input name="license_key" class="pj-form-field w250" />
 				</p>
 			</div>
 			<br class="clear_both" />

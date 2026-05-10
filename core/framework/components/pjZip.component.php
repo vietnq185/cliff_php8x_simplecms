@@ -148,9 +148,8 @@ class pjZip
 	/**
 	 * Function to return the zip file
 	 *
-	 * @return zipfile (archive)
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
 	function getZippedfile() {
 		$data = implode("", $this->compressedData);
@@ -172,7 +171,7 @@ class pjZip
 	 *
 	 * @param archiveName string - name of the created archive file
 	 * @access public
-	 * @return ZipFile via Header
+	 * @return resource
 	 */
 	function forceDownload($archiveName) {
 		if(ini_get('zlib.output_compression')) {

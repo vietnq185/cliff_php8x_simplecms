@@ -19,60 +19,61 @@ $STORAGE = &$_SESSION[$controller->defaultInstaller];
 		$hasErrors = TRUE;
 		$alert = array('status' => 'ERR', 'text' => strip_tags($_SESSION[$controller->defaultErrors][$_GET['err']]));
 	}
+	if (isset($tpl['warning']))
+	{
+		?>
+		<div class="i-status i-status-error">
+			<div class="i-status-icon"><abbr></abbr></div>
+			<div class="i-status-txt">
+				<h2>Warning!</h2>
+				<p class="t10">If you proceed with the installation your current database tables and all the data will be deleted.</p>
+			</div>
+		</div>
+		<?php
+	}
 	?>
-		
-	<p>Please enter MYSQL login details for your server. If you do not know these please contact your hosting company and ask them to provide you with correct details.</p>
-	<p>Alternatively, you can send us access to your hosting account control panel (the place where you manage your hosting account) and we can create MySQL database and user for you.</p>
+	<p>We've detected the following server paths where product is uploaded. Most probably you will not have to change these paths.</p>
 	
 	<form action="index.php?controller=pjInstaller&amp;action=pjActionStep4&amp;install=1" method="post" id="frmStep3" class="i-form">
 		<input type="hidden" name="step3" value="1" />
 		<table cellpadding="0" cellspacing="0" class="i-table t20">
 			<thead>
 				<tr>
-					<th>MySQL Login Details</th>
+					<th>Installation paths</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td>
 						<p>
-							<label class="i-title">Hostname <span class="i-red">*</span></label>
-							<input type="text" tabindex="1" name="hostname" class="pj-form-field w200 required block" value="<?php echo isset($STORAGE['hostname']) ? htmlspecialchars($STORAGE['hostname']) : 'localhost'; ?>" />
-							<span style="display: block;text-indent: 120px;">*Hostname could be hostname (domain or localhost) or IP address. You can also specify specific server port example.com:3307 or socket :/tmp/mysql</span>
+							<label class="i-title">Folder Name <span class="i-red">*</span></label>
+							<input type="text" tabindex="1" name="install_folder" class="pj-form-field w400 required" value="<?php echo isset($tpl['paths']) ? $tpl['paths']['install_folder'] : htmlspecialchars(@$STORAGE['install_folder']); ?>" /></p>
+						<p>
+							<label class="i-title">Full URL <span class="i-red">*</span></label>
+							<input type="text" tabindex="2" name="install_url" class="pj-form-field w400 required" value="<?php echo isset($tpl['paths']) ? $tpl['paths']['install_url'] : htmlspecialchars(@$STORAGE['install_url']); ?>" />
 						</p>
 						<p>
-							<label class="i-title">Username <span class="i-red">*</span></label>
-							<input type="text" tabindex="2" name="username" class="pj-form-field w200 required" value="<?php echo isset($STORAGE['username']) ? htmlspecialchars($STORAGE['username']) : NULL; ?>" />
-						</p>
-						<p>
-							<label class="i-title">Password</label>
-							<input type="text" tabindex="3" name="password" class="pj-form-field w200" value="<?php echo isset($STORAGE['password']) ? htmlspecialchars($STORAGE['password']) : NULL; ?>" />
-						</p>
-						<p>
-							<label class="i-title">Database <span class="i-red">*</span></label>
-							<input type="text" tabindex="4" name="database" class="pj-form-field w200 required" value="<?php echo isset($STORAGE['database']) ? htmlspecialchars($STORAGE['database']) : NULL; ?>" />
-						</p>
-						<p>
-							<label class="i-title">Table prefix</label>
-							<input type="text" tabindex="5" name="prefix" class="pj-form-field w200" value="<?php echo isset($STORAGE['prefix']) ? htmlspecialchars($STORAGE['prefix']) : NULL; ?>" />
-							<span style="display: block;text-indent: 120px;">* you can leave that blank or enter table prefix which will be added to all MySQL tables names</span>
+							<label class="i-title">Server Path <span class="i-red">*</span></label>
+							<input type="text" tabindex="3" name="install_path" class="pj-form-field w400 required" value="<?php echo isset($tpl['paths']) ? $tpl['paths']['install_path'] : htmlspecialchars(@$STORAGE['install_path']); ?>" />
 						</p>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-	
+		
 		<div class="t20">
 			<p class="float_left pt5">Need help? <a href="https://www.phpjabbers.com/contact.php" target="_blank">Contact us</a></p>
-			<input type="submit" tabindex="6" value="Continue &raquo;" class="pj-button float_right l5" />
-			<input type="button" tabindex="7" value="&laquo; Back" class="pj-button float_right" onclick="window.location='index.php?controller=pjInstaller&amp;action=pjActionStep2'" />
+			<input type="submit" tabindex="4" value="Continue &raquo;" class="pj-button float_right l5" />
+			<input type="button" tabindex="5" value="&laquo; Back" class="pj-button float_right" onclick="window.location='index.php?controller=pjInstaller&amp;action=pjActionStep2'" />
 			<br class="clear_both" />
 		</div>
 	</form>
-</div>
-<?php 
-if ($hasErrors)
-{
-	?><img src="https://www.stivasoft.com/trackInstall.php?version=<?php echo PJ_SCRIPT_VERSION; ?>&build=<?php echo PJ_SCRIPT_BUILD; ?>&script=<?php echo PJ_SCRIPT_ID; ?>&license_key=<?php echo urlencode(@$_SESSION[$controller->defaultInstaller]['license_key']); ?>&alert=<?php echo urlencode(base64_encode(serialize($alert))); ?>" style="display: none" /><?php
-}
-?>
+	
+	<div class="i-status i-status-notice">
+		<div class="i-status-icon"><span class="bold block t15 l15">Examples:</span></div>
+		<div class="i-status-txt">
+			<p class="float_left"># if the product is uploaded in http://www.website.com/script/ then<br />Folder name should be: /script/<br />Full URL should be: http://website.com/script/</p>
+			<p class="float_right"># if the product is uploaded in http://website.com/folder/script/ then<br />Folder name should be: /folder/script/<br />Full URL should be: http://website.com/folder/script/</p>
+		</div>
+	</div>
+</div>

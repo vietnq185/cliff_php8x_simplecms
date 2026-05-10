@@ -94,6 +94,9 @@ class pjSanitize
  */
 	public static function html($string, $options = array())
 	{
+	    if (empty($string)) {
+	        return $string;
+	    }
 		$default = array(
 			'remove' => false,
 			'charset' => 'UTF-8',

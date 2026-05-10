@@ -7,10 +7,10 @@ if (!defined("ROOT_PATH"))
 /**
  * PHP Framework
  *
- * @copyright Copyright 2016, StivaSoft, Ltd. (https://www.stivasoft.com)
+ * @copyright Copyright 2016, PHPJabbers
  * @link      https://www.phpjabbers.com/
  * @package   framework.components
- * @version   1.5.4
+ * @version   1.5.6
  */
 /**
  * XML data mapper
@@ -162,7 +162,7 @@ class pjXML
 			$str = $this->eol . "\t<" . $this->record . ">";
 			foreach ($item as $key => $value)
 			{
-				$str .= $this->eol . "\t\t<" . $key . ">" . pjSanitize::html($value) . "</" . $key . ">";
+				$str .= $this->eol . "\t\t<" . $key . ">" . str_replace(array('<', '>'), array('&lt;', '&gt;'), $value) . "</" . $key . ">";
 			}
 			$str .= $this->eol . "\t</" . $this->record . ">";
 			fwrite($this->fp, $str);

@@ -5,7 +5,6 @@
 			$frmStep3 = $('#frmStep3'),
 			$frmStep4 = $('#frmStep4'),
 			$frmStep5 = $('#frmStep5'),
-			$frmStep6 = $('#frmStep6'),
 			$frmChangeLogin = $('#frmChangeLogin'),
 			$frmChange = $('#frmChange'),
 			validate = ($.fn.validate !== undefined);
@@ -37,18 +36,6 @@
 		}
 		
 		if ($frmStep2.length && validate) {
-			$frmStep2.validate({
-				errorClass: "i-error",
-				validClass: "i-valid",
-				submitHandler: function(form) {
-					$("input[type='submit'], input[type='button']").prop("disabled", true).addClass("pj-button-disabled");
-					form.submit();
-				}				
-			});			
-		}
-		
-		if ($frmStep3.length && validate) {
-			
 			$.validator.addMethod("prefix", function (value, element, param) {
 				if (value.length == 0) {
 					return true;
@@ -60,7 +47,7 @@
 				return !re.test(value)
 			}, "Prefix must be no more than 30 characters long and could contain only digits, letters, and '_'");
 			
-			$frmStep3.validate({
+			$frmStep2.validate({
 				rules: {
 					prefix: "prefix"
 				},
@@ -70,22 +57,22 @@
 					$("input[type='submit'], input[type='button']").prop("disabled", true).addClass("pj-button-disabled");
 					form.submit();
 				}
-			});			
+			});				
 		}
 		
-		if ($frmStep4.length && validate) {
-			$frmStep4.validate({
+		if ($frmStep3.length && validate) {
+			$frmStep3.validate({
 				errorClass: "i-error",
 				validClass: "i-valid",
 				submitHandler: function(form) {
 					$("input[type='submit'], input[type='button']").prop("disabled", true).addClass("pj-button-disabled");
 					form.submit();
 				}				
-			});			
+			});						
 		}
 		
-		if ($frmStep5.length && validate) {
-			$frmStep5.validate({
+		if ($frmStep4.length && validate) {
+			$frmStep4.validate({
 				rules: {
 					admin_email: {
 						required: true,
@@ -102,22 +89,8 @@
 			});			
 		}
 		
-		function enableButtons() {
-			$("input[type='submit'], input[type='button']").prop("disabled", false).removeClass("pj-button-disabled");
-		}
-		function trackError(url, id) {
-			if ($('#' + id).length) {
-				return;
-			}
-			$('<img>', {
-				src: url,
-				id: id,
-				display: 'none'
-			}).appendTo(this);
-		}
-		
-		if ($frmStep6.length && validate) {
-			$frmStep6.validate({
+		if ($frmStep5.length && validate) {
+			$frmStep5.validate({
 				errorClass: "i-error",
 				validClass: "i-valid",
 				submitHandler: function(form) {
@@ -131,15 +104,9 @@
 							$ready.eq(1).addClass("i-option-load");
 							$.post("index.php?controller=pjInstaller&action=pjActionSetDb&install=1").done(function (data) {
 								if (data.code == 200) {
-									if (data.url) {
-										trackError.call(form, data.url, 'track-ok');
-									}
 									$ready.eq(1).addClass("i-option-ok").removeClass("i-option-load i-option-ready");
 									form.submit();
 								} else {
-									if (data.url) {
-										trackError.call(form, data.url, 'track-err-db');
-									}
 									$ready.eq(1).addClass("i-option-err").removeClass("i-option-load i-option-ready");
 									enableButtons();
 									$(".i-status").find("p").html(data.text).end().show();
@@ -148,9 +115,6 @@
 								enableButtons();
 							});
 						} else {
-							if (data.url) {
-								trackError.call(form, data.url, 'track-err-config');
-							}
 							$ready.eq(0).addClass("i-option-err").removeClass("i-option-load i-option-ready");
 							enableButtons();
 							$(".i-status").find("p").html(data.text).end().show();
@@ -159,7 +123,11 @@
 						enableButtons();
 					});
 				}				
-			});			
+			});		
+		}
+		
+		function enableButtons() {
+			$("input[type='submit'], input[type='button']").prop("disabled", false).removeClass("pj-button-disabled");
 		}
 		
 		if ($frmChangeLogin.length && validate) {
@@ -172,7 +140,6 @@
 						required: true,
 						email: true
 					},
-					license_key: "required",
 					captcha: {
 						required: true,
 						maxlength: 6,
@@ -220,7 +187,6 @@
 			}).validate({
 				rules: {
 					new_domain: "required",
-					license_key: "required",
 					hostname: "required",
 					username: "required",
 					database: "required"

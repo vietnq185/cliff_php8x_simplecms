@@ -111,7 +111,7 @@ class pjValidation {
  * @param boolean $deep set to true this will check the Luhn algorithm of the credit card.
  * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
  * @return boolean Success
- * @see Validation::pjActionLuhn()
+ * @see pjValidation::pjActionLuhn()
  */
 	public static function pjActionCreditCard($check, $type = 'fast', $deep = false, $regex = null) {
 		if (is_array($check)) {
@@ -309,8 +309,8 @@ class pjValidation {
  * 	- my 12/2006 separators can be a space, period, dash, forward slash
  * @param string $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
  * @return boolean True if the value is valid, false otherwise
- * @see Validation::pjActionDate
- * @see Validation::pjActionTime
+ * @see pjValidation::pjActionDate
+ * @see pjValidation::pjActionTime
  */
 	public static function pjActionDatetime($check, $dateFormat = 'ymd', $regex = null) {
 		$valid = false;

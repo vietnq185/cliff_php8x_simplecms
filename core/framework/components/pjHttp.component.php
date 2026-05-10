@@ -7,10 +7,10 @@ if (!defined("ROOT_PATH"))
 /**
  * PHP Framework
  *
- * @copyright Copyright 2016, StivaSoft, Ltd. (https://www.stivasoft.com)
+ * @copyright Copyright 2016, PHPJabbers
  * @link      https://www.phpjabbers.com/
  * @package   framework.components
- * @version   1.5.4
+ * @version   1.5.6
  */
 /**
  * HTTP class
@@ -136,7 +136,7 @@ class pjHttp
  * @var string
  * @access private
  */
-	private $userAgent = "StivaSoft PHP Library";
+	private $userAgent = "PHPJabbers PHP Library";
   
 	public function getError()
 	{
@@ -486,7 +486,12 @@ class pjHttp
 	{
 		if (is_array($data) && $encode_string)
 		{
-			$data = http_build_query($data);
+			if (version_compare(phpversion(), '5.1.2', '>='))
+			{
+				$data = http_build_query($data, '', '&');
+			} else {
+				$data = http_build_query($data);
+			}
 		}
 		$this->data = $data;
 		return $this;

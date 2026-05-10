@@ -7,10 +7,10 @@ if (!defined("ROOT_PATH"))
 /**
  * PHP Framework
  *
- * @copyright Copyright 2016, StivaSoft, Ltd. (https://www.stivasoft.com)
+ * @copyright Copyright 2016, PHPJabbers
  * @link      https://www.phpjabbers.com/
  * @package   framework.components
- * @version   1.5.4
+ * @version   1.5.6
  */
 /**
  * Toolkit class
@@ -402,7 +402,7 @@ class pjToolkit
 		$text = pjToolkit::field($key);
 		if ($return)
 		{
-			if (!$escape)
+			if (!$escape || empty($text))
 			{
 				return $text;
 			} else {
@@ -420,9 +420,9 @@ class pjToolkit
 		}
 		if (!is_array($text))
 		{
-			echo !$escape ? $text : htmlspecialchars($text, ENT_QUOTES);
+			echo !$escape || empty($text) ? $text : htmlspecialchars($text, ENT_QUOTES);
 		} else {
-			if (!$escape)
+		    if (!$escape || empty($text))
 			{
 				return $text;
 			} else {
@@ -646,7 +646,7 @@ class pjToolkit
 		$stop = array('.', '..', '.buildpath', '.project', '.svn', 'Thumbs.db');
 		if ($handle = opendir($dir))
 		{
-			$sep = $dir{strlen($dir)-1} != '/' ? '/' : NULL;
+			$sep = $dir[strlen($dir)-1] != '/' ? '/' : NULL;
 			while (false !== ($file = readdir($handle)))
 			{
 				if (in_array($file, $stop)) continue;

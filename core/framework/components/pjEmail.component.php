@@ -7,10 +7,10 @@ if (!defined("ROOT_PATH"))
 /**
  * PHP Framework
  *
- * @copyright Copyright 2016, StivaSoft, Ltd. (https://www.stivasoft.com)
+ * @copyright Copyright 2018, PHPJabbers
  * @link      https://www.phpjabbers.com/
  * @package   framework.components
- * @version   1.5.4
+ * @version   2.0.1
  */
 /**
  * Email class
@@ -153,6 +153,57 @@ class pjEmail
  * @access private
  */
 	private $smtpPass = NULL;
+	
+/**
+ * SMTP secure
+ *
+ * @var string
+ * @access private
+ */
+    private $smtpSecure = '';
+    
+/**
+ * SMTP Auth Type
+ *
+ * @var string
+ * @access private
+ */
+    private $smtpAuthType = '';
+    
+/**
+ * 
+ * @var object
+ */
+    private $debugger = NULL;
+    
+/**
+ * Array for errors:
+ * key will be error code
+ * value will be corresponding error message.
+ * 
+ * @var array
+ */
+    private $codes = array(
+        100 => 'To email address is not valid.',
+        101 => 'From email address is not valid.',
+        102 => 'Header is not valid.',
+        103 => 'Content type given does not exist.',
+        104 => 'Email could not be sent.',
+    );
+    
+/**
+ * 
+ * @var string
+ */
+    private $errorCode = NULL;
+    
+/**
+ * Keep the error message with unknown code
+ * 
+ * @var string
+ */
+    private $errorMessage = NULL;
+    
 /**
  * Constructor - automatically called when you create a new instance of a class with new
  *
@@ -298,98 +349,7 @@ class pjEmail
 	{
 		return $this->headers;
 	}
-/**
- * Get message alongside headers, parts, attachments (append body content too)
- *
- * @param string $body
- * @access private
- * @return string
- */
-	private function getMessage($body)
-	{
-		$message = "";
-		
-		if (count($this->attachments) > 0)
-		{
-			$this->setHeader('Content-Type: multipart/mixed; boundary="PHP-mixed-'.$this->uid.'"');
-		
-			$message .= "--PHP-mixed-".$this->uid.$this->eol;
-		    $message .= 'Content-Type: multipart/alternative; boundary="PHP-alt-'.$this->uid.'"'.$this->eol.$this->eol;
-		
-		    $message .= $this->getParts($body);
-		    
-			foreach ($this->attachments as $attachment)
-			{
-				if (!empty($attachment['filename']) && is_file($attachment['filename']))
-				{
-					ob_start();
-					readfile($attachment['filename']);
-					$fileContent = ob_get_contents();
-					ob_end_clean();
-					
-					$content = chunk_split(base64_encode($fileContent));
-					
-					$message .= "--PHP-mixed-".$this->uid.$this->eol;
-				    $message .= 'Content-Type: '.$attachment['mimetype'].'; name="'.$attachment['name'].'"'.$this->eol;
-				    $message .= "Content-Transfer-Encoding: base64".$this->eol;
-				    $message .= 'Content-Disposition: attachment; filename="'.$attachment['name'].'"'.$this->eol.$this->eol;
-				    
-				    $message .= $content.$this->eol;
-				}
-			}
-			$message .= "--PHP-mixed-".$this->uid."--".$this->eol;
-		} else {
-			if (!empty($this->part))
-			{
-				$this->setHeader('Content-Type: multipart/mixed; boundary="PHP-mixed-'.$this->uid.'"');
-				
-				$message .= "--PHP-mixed-".$this->uid.$this->eol;
-		    	$message .= 'Content-Type: multipart/alternative; boundary="PHP-alt-'.$this->uid.'"'.$this->eol.$this->eol;
-		    
-		    	$message .= $this->getParts($body);
-				
-				$message .= "--PHP-mixed-".$this->uid."--".$this->eol;
-			} else {
-				$message = $body;
-			}
-		}
-		
-		return $message;
-	}
-/**
- * Get multi parts (append body too)
- *
- * @param string $body
- * @access private
- * @return string
- */
-	private function getParts($body)
-	{
-		$message = "";
-		
-		if (!empty($this->part))
-		{
-			# Alternative part start
-			$message .= "--PHP-alt-".$this->uid.$this->eol;
-	    	$message .= "Content-type: ".$this->part['mimetype']."; charset=".(!empty($this->part['charset']) ? $this->part['charset'] : $this->charset).$this->eol;
-	    	$message .= "Content-Transfer-Encoding: ".$this->getContentTransferEncoding().$this->eol.$this->eol;
-	    
-			$message .= $this->part['content'].$this->eol.$this->eol;
-			# Alternative part end
-		}
-		
-		# Default message start
-		$message .= "--PHP-alt-".$this->uid.$this->eol;
-    	$message .= "Content-type: ".$this->contentType."; charset=".$this->charset.$this->eol;
-    	$message .= "Content-Transfer-Encoding: ".$this->getContentTransferEncoding().$this->eol.$this->eol;
-    
-		$message .= $body.$this->eol.$this->eol;
-		# Default message end
-		
-		$message .= "--PHP-alt-".$this->uid."--".$this->eol.$this->eol;
-				
-		return $message;
-	}
+
 /**
  * Send email
  *
@@ -401,11 +361,15 @@ class pjEmail
 	{
 		if (!preg_match($this->emailRegExp, $this->to))
 		{
+		    $this->errorCode = 100;
+		    $this->log(100);
 			return false;
 		}
 
 		if (!preg_match($this->emailRegExp, $this->from))
 		{
+		    $this->errorCode = 101;
+		    $this->log(101);
 			return false;
 		}
 		
@@ -414,102 +378,92 @@ class pjEmail
 			$body = html_entity_decode($body, ENT_QUOTES, $this->charset);
 		}
 		
-		switch ($this->transport)
+		$mail = new pjPHPMailer();
+		$mail->set('CharSet', $this->charset);
+		$mail->set('ContentType', $this->contentType);
+		if($this->transport == 'mail')
 		{
-			case 'mail':
-				$message = $this->getMessage($body);
-				
-				$required = array(
-					'MIME-Version' => '1.0',
-					'Content-Type' => sprintf("%s; charset=%s", $this->contentType, $this->charset),
-					'From' => empty($this->fromName) ? $this->from : sprintf("%s <%s>", $this->fromName, $this->from),
-					'Reply-To' => empty($this->fromName) ? $this->from : sprintf("%s <%s>", $this->fromName, $this->from),
-				);
-				
-				foreach ($required as $key => $val)
-				{
-					if ($this->getHeader($key) === FALSE)
-					{
-						$this->setHeader(sprintf("%s: %s", $key, $val));
-					}
-				}
-		
-				return @mail(empty($this->toName) ? $this->to : sprintf("%s <%s>", $this->toName, $this->to), $this->subject, $message, join($this->eol, $this->getHeaders()));
-				
-				break;
-			case 'smtp':
-				$mail = new pjPHPMailer();
-				$mail->set('CharSet', $this->charset);
-				$mail->set('ContentType', $this->contentType);
-				$mail->IsSMTP();
-				try {
-					$mail->Host = $this->smtpHost;
-					$mail->Port = $this->smtpPort;
-					if (!empty($this->smtpUser))
-					{
-						$mail->SMTPAuth = true;
-						$mail->Username = $this->smtpUser;
-						$mail->Password = $this->smtpPass;
-					}
-					$sender = $this->getHeader('Sender');
-					if ($sender !== FALSE)
-					{
-						list(, $string) = explode(':', $sender);
-						$mail->Sender = trim($string);
-						$mail->AddCustomHeader('Sender', $mail->Sender);
-					}
-					$mail->AddAddress($this->to, $this->toName);
-					$mail->SetFrom($this->from, $this->fromName);
-					
-					$mail->ClearReplyTos();
-					$mail->AddReplyTo($this->from, $this->fromName);
-					# Fix for Reply-To header
-					$reply_to = $this->getHeader('Reply-To');
-					if ($reply_to !== FALSE)
-					{
-						$mail->ClearReplyTos();
-						list(, $string) = explode(':', $reply_to);
-						$string = trim($string);
-						if (preg_match('|^(.*)\s<(.*)>$|', $string, $m))
-						{
-							$mail->AddReplyTo($m[2], $m[1]);
-						} else {
-							$mail->AddReplyTo($string);
-						}
-					}
-					$mail->Subject = $this->subject;
-					//$mail->MsgHTML($body);
-					$mail->Body = $body;
-					if (!empty($this->part))
-					{
-						$mail->AltBody = $this->part['content'];
-					}
-					if ($this->contentType == 'text/html')
-					{
-						$mail->IsHTML(true);
-					}
-					foreach ($this->attachments as $attachment)
-					{
-						if (!empty($attachment['filename']) && is_file($attachment['filename']))
-						{
-							$mail->AddAttachment($attachment['filename']);
-						}
-					}
-					if (!$mail->Send())
-					{
-						//echo $mail->ErrorInfo;
-						return false;
-					} else {
-						return true;
-					}
-				} catch (phpmailerException $e) {
-					//echo $e->errorMessage();
-					return false;
-				} catch (Exception $e) {
-					//echo $e->getMessage();
-					return false;
-				}
-				break;
+		    $mail->isMail();
+		}else{
+		    $mail->isSMTP();
+		}
+		try {
+		    if($this->transport == 'smtp')
+		    {
+		        $mail->Host = $this->smtpHost;
+		        $mail->Port = $this->smtpPort;
+		        if(in_array($this->smtpSecure, array('ssl', 'tls')))
+                {
+                    $mail->SMTPSecure = $this->smtpSecure;
+                    $mail->Host = str_ireplace(array('ssl://', 'tls://'), array('', ''), $mail->Host);
+                }
+		        if (!empty($this->smtpUser))
+		        {
+		            $mail->SMTPAuth = true;
+		            $mail->AuthType = $this->smtpAuthType;
+		            $mail->Username = $this->smtpUser;
+		            $mail->Password = $this->smtpPass;
+		        }
+		    }
+		    $sender = $this->getHeader('Sender');
+		    if ($sender !== FALSE)
+		    {
+		        list(, $string) = explode(':', $sender);
+		        $mail->Sender = trim($string);
+		        $mail->addCustomHeader('Sender', $mail->Sender);
+		    }
+		    $mail->addAddress($this->to, $this->toName);
+		    $mail->setFrom($this->from, $this->fromName, false);
+		    
+		    $mail->clearReplyTos();
+		    $mail->addReplyTo($this->from, $this->fromName);
+		    # Fix for Reply-To header
+		    $reply_to = $this->getHeader('Reply-To');
+		    if ($reply_to !== FALSE)
+		    {
+		        $mail->clearReplyTos();
+		        list(, $string) = explode(':', $reply_to);
+		        $string = trim($string);
+		        if (preg_match('|^(.*)\s<(.*)>$|', $string, $m))
+		        {
+		            $mail->addReplyTo($m[2], $m[1]);
+		        } else {
+		            $mail->addReplyTo($string);
+		        }
+		    }
+		    $mail->Subject = $this->subject;
+		    $mail->Body = $body;
+		    if (!empty($this->part))
+		    {
+		        $mail->AltBody = $this->part['content'];
+		    }
+		    if ($this->contentType == 'text/html')
+		    {
+		        $mail->isHTML(true);
+		    }
+		    foreach ($this->attachments as $attachment)
+		    {
+		        if (!empty($attachment['filename']) && is_file($attachment['filename']))
+		        {
+		            $mail->addAttachment($attachment['filename']);
+		        }
+		    }
+		    if (!$mail->send())
+		    {
+		        $this->errorCode = 104;
+		        $this->log(104);
+		        return false;
+		    } else {
+		        return true;
+		    }
+		}catch (pjException $e) {
+		    $this->errorMessage = $e->errorMessage();
+		    $this->log($e->errorMessage());
+		    return false;
+		} catch (Exception $e) {
+		    $this->errorMessage = $e->errorMessage();
+		    $this->log($e->errorMessage());
+		    return false;
 		}
 	}
 /**
@@ -546,6 +500,8 @@ class pjEmail
 	{
 		if (strpos($header, ":") === FALSE)
 		{
+		    $this->errorCode = 102;
+		    $this->log(102);
 			return FALSE;
 		}
 		list($name,) = explode(":", $header);
@@ -587,6 +543,8 @@ class pjEmail
 	{
 		if (!in_array($contentType, array('text/plain', 'text/html', 'multipart/mixed', 'multipart/alternative')))
 		{
+		    $this->errorCode = 103;
+		    $this->log(103);
 			return false;
 		}
 		$this->contentType = $contentType;
@@ -793,5 +751,105 @@ class pjEmail
 		}
 		return $this;
 	}
+	
+/**
+ * Set SMTP Secure tls or ssl
+ *
+ * @param string $value
+ * @access public
+ * @return self
+ */
+    public function setSmtpSecure($value)
+    {
+    	if (in_array($value, array('', 'ssl', 'tls')))
+    	{
+    		$this->smtpSecure = $value;
+    	}
+        return $this;
+    }
+    
+/**
+ * Set SMTP Auth Type
+ *
+ * @param int $method
+ * @access public
+ * @return self
+ */
+    public function setSmtpAuthType($type)
+    {
+    	if (in_array($type, array('CRAM-MD5', 'LOGIN', 'PLAIN', 'XOAUTH2')))
+    	{
+        	$this->smtpAuthType = $type;
+    	}
+        return $this;
+    }
+    
+/**
+ * Set Debugger
+ *
+ * @param object $debugger
+ * @access public
+ * @return self
+ */
+    public function setDebugger($debugger)
+    {
+        $this->debugger = $debugger;
+        return $this;
+    }
+
+/**
+ * Return the errorCode
+ *
+ * @return string
+ */
+    public function getErrorCode()
+    {
+        return $this->errorCode;
+    }
+    
+/**
+ * Return the error message
+ *
+ * @return string
+ */
+    public function getErrorMessage()
+    {
+        if(!is_null($this->errorCode))
+        {
+            if(isset($this->codes[$this->errorCode]))
+            {
+                return $this->codes[$this->errorCode];
+            }else{
+                return $this->errorMessage;
+            }
+        }else{
+            return $this->errorMessage;
+        }
+    }
+/**
+ * Write log using pjBase plugin, before then we need to set logger.
+ * From the controller we should set like
+ * $pjEmail->setDebugger($this); 
+ * to save logs
+ * 
+ * If the $code is not found the codes array,
+ * it will consider $code as message to be logged.
+ * 
+ * @param string $code
+ * @access protected
+ * @return void
+ */    
+    protected function log($code)
+    {
+        if(!is_null($this->debugger))
+        {
+            if(isset($this->codes[$code]))
+            {
+                $this->debugger->log($this->codes[$code]);
+            }else{
+                $this->debugger->log($code);
+            }
+        }
+    }
 }
 ?>

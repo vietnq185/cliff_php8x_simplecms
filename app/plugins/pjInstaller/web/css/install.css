@@ -106,29 +106,25 @@ span.i-red{
 .progress-wrap ._ps1_cur{background-position: 0 0;left: 0;}
 .progress-wrap ._ps1_pas{background-position: 0 -273px;left: 0;}
 
-.progress-wrap ._ps2_cur{background-position: 0 -39px;left: 165px;}
-.progress-wrap ._ps2_pas{background-position: 0 -273px;left: 165px;}
-.progress-wrap ._ps2{background-position: 0 -312px;left: 165px;}
+.progress-wrap ._ps2_cur{background-position: 0 -39px;left: 198px;}
+.progress-wrap ._ps2_pas{background-position: 0 -273px;left: 198px;}
+.progress-wrap ._ps2{background-position: 0 -312px;left: 198px;}
 
-.progress-wrap ._ps3_cur{background-position: 0 -78px;left: 330px;}
-.progress-wrap ._ps3_pas{background-position: 0 -273px;left: 330px;}
-.progress-wrap ._ps3{background-position: 0 -351px;left: 330px;}
+.progress-wrap ._ps3_cur{background-position: 0 -78px;left: 396px;}
+.progress-wrap ._ps3_pas{background-position: 0 -273px;left: 396px;}
+.progress-wrap ._ps3{background-position: 0 -351px;left: 396px;}
 
-.progress-wrap ._ps4_cur{background-position: 0 -117px;left: 495px;}
-.progress-wrap ._ps4_pas{background-position: 0 -273px;left: 495px;}
-.progress-wrap ._ps4{background-position: 0 -390px;left: 495px;}
+.progress-wrap ._ps4_cur{background-position: 0 -117px;left: 594px;}
+.progress-wrap ._ps4_pas{background-position: 0 -273px;left: 594px;}
+.progress-wrap ._ps4{background-position: 0 -390px;left: 594px;}
 
-.progress-wrap ._ps5_cur{background-position: 0 -156px;left: 660px;}
-.progress-wrap ._ps5_pas{background-position: 0 -273px;left: 660px;}
-.progress-wrap ._ps5{background-position: 0 -429px;left: 660px;}
+.progress-wrap ._ps5_cur{background-position: 0 -156px;left: 792px;}
+.progress-wrap ._ps5_pas{background-position: 0 -273px;left: 792px;}
+.progress-wrap ._ps5{background-position: 0 -429px;left: 792px;}
 
-.progress-wrap ._ps6_cur{background-position: 0 -195px;left: 825px;}
-.progress-wrap ._ps6_pas{background-position: 0 -273px;left: 825px;}
-.progress-wrap ._ps6{background-position: 0 -468px;left: 825px;}
-
-.progress-wrap ._ps7_cur{background-position: 0 -234px;left: 990px;}
-.progress-wrap ._ps7_pas{background-position: 0 -273px;left: 990px;}
-.progress-wrap ._ps7{background-position: 0 -507px;left: 990px;}
+.progress-wrap ._ps6_cur{background-position: 0 -195px;left: 990px;}
+.progress-wrap ._ps6_pas{background-position: 0 -273px;left: 990px;}
+.progress-wrap ._ps6{background-position: 0 -507px;left: 990px;}
 
 .progress-back,
 .progress-front{

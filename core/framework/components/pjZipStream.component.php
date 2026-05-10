@@ -431,7 +431,7 @@ class pjZipStream {
      * Get the handle ressource for the archive zip file.
      * If the zip haven't been finalized yet, this will cause it to become finalized
      *
-     * @return zip file handle
+     * @return resource file handle
      */
     public function getZipFile() {
         if (!$this->isFinalized) {
@@ -449,7 +449,7 @@ class pjZipStream {
      * Get the zip file contents
      * If the zip haven't been finalized yet, this will cause it to become finalized
      *
-     * @return zip data
+     * @return string zip data
      */
     public function getZipData() {
         if (!$this->isFinalized) {

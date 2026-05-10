@@ -7,10 +7,10 @@ if (!defined("ROOT_PATH"))
 /**
  * PHP Framework
  *
- * @copyright Copyright 2016, StivaSoft, Ltd. (https://www.stivasoft.com)
+ * @copyright Copyright 2016, PHPJabbers
  * @link      https://www.phpjabbers.com/
  * @package   framework
- * @version   1.5.4
+ * @version   1.5.6
  */
 /**
  * The Singleton ensures that there can be only one instance of a Class and provides a global access point to that instance.
@@ -73,7 +73,7 @@ class pjSingleton
  * @access public
  * @static
  * @staticvar Singleton $instance The Singleton instances of this class.
- * @return Singleton The Singleton instance.
+ * @return pjSingleton The Singleton instance.
  */
 	public static function getInstance($className, $params=array())
 	{

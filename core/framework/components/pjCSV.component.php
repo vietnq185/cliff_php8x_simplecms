@@ -7,10 +7,10 @@ if (!defined("ROOT_PATH"))
 /**
  * PHP Framework
  *
- * @copyright Copyright 2016, StivaSoft, Ltd. (https://www.stivasoft.com)
+ * @copyright Copyright 2016, PHPJabbers
  * @link      https://www.phpjabbers.com/
  * @package   framework.components
- * @version   1.5.4
+ * @version   1.5.6
  */
 /**
  * CSV data mapper

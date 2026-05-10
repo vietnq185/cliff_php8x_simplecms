@@ -2,10 +2,10 @@
 /**
  * PHP Framework
  *
- * @copyright Copyright 2016, StivaSoft, Ltd. (https://www.stivasoft.com)
+ * @copyright Copyright 2016, PHPJabbers
  * @link      https://www.phpjabbers.com/
  * @package   framework.components
- * @version   1.5.4
+ * @version   1.5.6
  */
 /**
  * Multibyte class
@@ -145,7 +145,7 @@ class pjMultibyte
 /**
  *
  *
- * @param unknown_type $source_contents
+ * @param string|int $source_contents
  * @static
  * @access public
  * @return string
@@ -226,10 +226,10 @@ class pjMultibyte
  *
  * Find the numeric position of the first occurrence of <var>needle</var> in the <var>haystack</var> string.
  *
- * @param unknown_type $haysack The string to search in.
- * @param unknown_type $needle If <var>needle</var> is not a string, it is converted to an integer and applied as the ordinal value of a character.
- * @param unknown_type $offset If specified, search will start this number of characters counted from the beginning of the string. The offset cannot be negative.
- * @param unknown_type $use_enc The expected encoding.
+ * @param string $haysack The string to search in.
+ * @param mixed $needle If <var>needle</var> is not a string, it is converted to an integer and applied as the ordinal value of a character.
+ * @param int $offset If specified, search will start this number of characters counted from the beginning of the string. The offset cannot be negative.
+ * @param string|null $use_enc The expected encoding.
  * @static
  * @access public
  * @return int|false Returns the position of where the needle exists relative to the beginning of the <var>haystack</var> string (independent of offset). Also note that string positions start at 0, and not 1. Returns <b>FALSE</b> if the needle was not found.

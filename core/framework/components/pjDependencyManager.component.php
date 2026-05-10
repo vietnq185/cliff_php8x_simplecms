@@ -8,7 +8,13 @@
 class pjDependencyManager
 {
 /**
- * Holds the basePath
+ * Holds the baseDir - the absolute path to the script' install folder
+ *  
+ * @var string
+ */
+	private $baseDir = NULL;
+/**
+ * Holds the basePath - the relative path from the script' install folder 
  *
  * @var string
  */
@@ -42,9 +48,10 @@ class pjDependencyManager
  * @param string $basePath
  * @return pjDependencyManager
  */
-	public function __construct($basePath=NULL)
+	public function __construct($baseDir=NULL, $basePath=NULL)
 	{
-		$this->basePath = $basePath;
+		$this->setBaseDir($baseDir);
+		$this->setBasePath($basePath);
 		
 		return $this;
 	}
@@ -150,7 +157,7 @@ class pjDependencyManager
 	{
 		foreach ($this->dependencies as $library => $operator_version)
 		{
-			$library_root = $this->basePath . $library;
+			$library_root = $this->baseDir . $this->basePath . $library;
 			if (!is_dir($library_root))
 			{
 				continue;
@@ -275,6 +282,18 @@ class pjDependencyManager
 			}
 		}
 		
+		return $this;
+	}
+/**
+ * Sets the 'baseDir' configuration option
+ * 
+ * @param string $value The new value for the 'baseDir'
+ * @return pjDependencyManager
+ */
+	public function setBaseDir($value)
+	{
+		$this->baseDir = (string) $value;
+	
 		return $this;
 	}
 /**

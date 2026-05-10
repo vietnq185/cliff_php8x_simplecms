@@ -7,10 +7,10 @@ if (!defined("ROOT_PATH"))
 /**
  * PHP Framework
  *
- * @copyright Copyright 2016, StivaSoft, Ltd. (https://www.stivasoft.com)
+ * @copyright Copyright 2016, PHPJabbers
  * @link      https://www.phpjabbers.com/
  * @package   framework.components
- * @version   1.5.4
+ * @version   1.5.6
  */
 /**
  * Image processing class
@@ -121,7 +121,7 @@ class pjImage extends pjUpload
 		imagecopyresampled($new_image, $this->getImage(), $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
 		
 		$rightX = $dst_w - $dst_x;
-		$rightY = $dst_y;
+		//$rightY = $dst_y;
 		if ($this->w == $rightX && $dst_x == 0 && $dst_y == 0)
 		{
 			//do nothing
@@ -197,7 +197,7 @@ class pjImage extends pjUpload
  * Get the size of an image
  *
  * @access public
- * @return Returns an array with 7 elements.
+ * @return array with 7 elements.
  */
 	public function getImageSize()
     {
@@ -537,7 +537,7 @@ class pjImage extends pjUpload
  */
 	public function setImage($resource)
 	{
-		if (is_resource($resource))
+		if (is_resource($resource) || $resource instanceof GdImage)
 		{
 			$this->image = $resource;
 		}
@@ -737,10 +737,10 @@ class pjImage extends pjUpload
 			 	$src_x = max(0, round($w / 2) - round(ceil($width * $index) / 2));
 			 	$src_y = max(0, round($h / 2) - round(ceil($height * $index) / 2));
 		
-			 	$dst_w = ceil($width * $index);
-			 	$dst_h = ceil($height * $index);
-			 	$src_w = ceil($width * $index);
-				$src_h = ceil($height * $index);
+			 	//$dst_w = ceil($width * $index);
+			 	//$dst_h = ceil($height * $index);
+			 	//$src_w = ceil($width * $index);
+				//$src_h = ceil($height * $index);
 		
 				//$this->crop($src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h, $dst_x, $dst_y);
 				$this->crop($src_x, $src_y, $width, $height, $width, $height, $dst_x, $dst_y);
